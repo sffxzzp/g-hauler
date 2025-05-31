@@ -21,12 +21,18 @@
   let validationResult = $state<PathValidationResult | null>(null);
   let dataPath = $state<string | null>(null);
   let showDataModal = $state(false);
+  let steamGamePaths = $state<string[]>([]);
+
   function openDataModal() { showDataModal = true; }
   function closeDataModal() { showDataModal = false; }
 
   async function fetchDataPath() {
     const value = await invoke<string | null>('store_get_key', { key: 'lghub_data_path' });
     dataPath = value;
+  }
+
+  async function fetchSteamGames() {
+    steamGamePaths = await invoke<string[]>('list_steam_game_paths');
   }
 
   onMount(() => {
@@ -54,6 +60,8 @@
       }
       hideSplashIfReady();
     });
+
+    fetchSteamGames();
   });
 </script>
 
@@ -76,6 +84,18 @@
           </button>
         {/if}
         <SelectGHubLoc open={showDataModal} onClose={closeDataModal} on:pathChange={fetchDataPath} />
+      </div>
+      <div class="p-4">
+        <h2 class="text-white text-lg mb-2">Installed steam games path：</h2>
+        {#if steamGamePaths.length > 0}
+          <ul class="text-white text-xs">
+            {#each steamGamePaths as [appid, path]}
+              <li>{appid}: {path}</li>
+            {/each}
+          </ul>
+        {:else}
+          <div class="text-white text-xs">No Steam games detected.</div>
+        {/if}
       </div>
       {@render children?.()}
     </div>

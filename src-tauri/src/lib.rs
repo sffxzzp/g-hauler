@@ -1,6 +1,7 @@
 mod store;
 mod constants;
 mod validation;
+mod steam;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -19,6 +20,7 @@ pub fn run() {
             crate::store::store_get_key,
             crate::store::store_set_key,
             crate::validation::validate_paths,
+			crate::steam::list_steam_game_paths,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
